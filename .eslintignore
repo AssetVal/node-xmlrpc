@@ -1,0 +1,9 @@
+.eslintrc.js
+node_modules
+./node_modules
+./examples
+./test
+.travis.yml
+./HISTORY.md
+LICENSE
+package.lock

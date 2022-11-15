@@ -1,7 +1,10 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const Client = require('./client'), Server = require('./server'), CustomType = require('./customtype'), dateFormatter = require('./date_formatter');
+const Client = require('./client'),
+  Server = require('./server'),
+  CustomType = require('./customtype'),
+  dateFormatter = require('./date_formatter');
+
 const xmlrpc = exports;
+
 /**
  * Creates an XML-RPC client.
  *
@@ -13,9 +16,10 @@ const xmlrpc = exports;
  * @return {Client}
  * @see Client
  */
-xmlrpc.createClient = function (options) {
-    return new Client(options, false);
+xmlrpc.createClient = function(options) {
+  return new Client(options, false);
 };
+
 /**
  * Creates an XML-RPC client that makes calls using HTTPS.
  *
@@ -27,9 +31,10 @@ xmlrpc.createClient = function (options) {
  * @return {Client}
  * @see Client
  */
-xmlrpc.createSecureClient = function (options) {
-    return new Client(options, true);
+xmlrpc.createSecureClient = function(options) {
+  return new Client(options, true);
 };
+
 /**
  * Creates an XML-RPC server.
  *
@@ -39,9 +44,10 @@ xmlrpc.createSecureClient = function (options) {
  * @return {Server}
  * @see Server
  */
-xmlrpc.createServer = function (options, callback) {
-    return new Server(options, false, callback);
+xmlrpc.createServer = function(options, callback) {
+  return new Server(options, false, callback);
 };
+
 /**
  * Creates an XML-RPC server that uses HTTPS.
  *
@@ -51,8 +57,9 @@ xmlrpc.createServer = function (options, callback) {
  * @return {Server}
  * @see Server
  */
-xmlrpc.createSecureServer = function (options, callback) {
-    return new Server(options, true, callback);
+xmlrpc.createSecureServer = function(options, callback) {
+  return new Server(options, true, callback);
 };
+
 xmlrpc.CustomType = CustomType;
 xmlrpc.dateFormatter = dateFormatter;
