@@ -5,18 +5,16 @@ const http = require('http'),
   Deserializer = require('./deserializer'),
   Cookies = require('./cookies');
 
-type ClientOptions = {
-  host: any;
-  hostname: any;
-  path: any;
-  pathname: any;
-  url: any;
-  port: any;
-  headers: { [x: string]: any; Authorization?: any };
-  basic_auth: { user: null; pass: null } | null;
-  method: string;
-  cookies: any;
-};
+interface ClientOptions {
+  host?: string | undefined;
+  path?: string | undefined;
+  port?: number | undefined;
+  url?: string | undefined;
+  cookies?: boolean | undefined;
+  headers?: { [header: string]: string } | undefined;
+  basic_auth?: { user: string, pass: string } | undefined;
+  method?: string | undefined;
+}
 
 /**
  * Creates a Client object for making XML-RPC method calls.
@@ -35,7 +33,7 @@ type ClientOptions = {
  *                                  otherwise false.
  * @return {Client}
  */
-function Client(options: ClientOptions, isSecure: any) {
+function Client(options: ClientOptions, isSecure: boolean) {
   // Invokes with new if called without
   if (this instanceof Client === false) {
     return new Client(options, isSecure);
