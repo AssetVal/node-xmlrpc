@@ -8,8 +8,15 @@ const http = require('http'),
 type ClientOptions = {
   host: any;
   hostname: any;
-  path: any; pathname: any; url: any; port: any; headers: { [x: string]: any; Authorization?: any; }; basic_auth: { user: null; pass: null; } | null; method: string; cookies: any;
-}
+  path: any;
+  pathname: any;
+  url: any;
+  port: any;
+  headers: { [x: string]: any; Authorization?: any };
+  basic_auth: { user: null; pass: null } | null;
+  method: string;
+  cookies: any;
+};
 
 /**
  * Creates a Client object for making XML-RPC method calls.
@@ -30,7 +37,7 @@ type ClientOptions = {
  */
 function Client(options: ClientOptions, isSecure: any) {
   // Invokes with new if called without
-  if ((this instanceof Client) === false) {
+  if (this instanceof Client === false) {
     return new Client(options, isSecure);
   }
 
@@ -54,16 +61,20 @@ function Client(options: ClientOptions, isSecure: any) {
     'Content-Type': 'text/xml',
     Accept: 'text/xml',
     'Accept-Charset': 'UTF8',
-    Connection: 'Keep-Alive',
+    Connection: 'Keep-Alive'
   };
   options.headers = options.headers || {};
 
-  if (options.headers.Authorization == null
-    && options.basic_auth != null
-    && options.basic_auth.user != null
-    && options.basic_auth.pass != null) {
+  if (
+    options.headers.Authorization == null &&
+    options.basic_auth != null &&
+    options.basic_auth.user != null &&
+    options.basic_auth.pass != null
+  ) {
     const auth = `${options.basic_auth.user}:${options.basic_auth.pass}`;
-    options.headers.Authorization = `Basic ${new Buffer(auth).toString('base64')}`;
+    options.headers.Authorization = `Basic ${new Buffer(auth).toString(
+      'base64'
+    )}`;
   }
 
   for (const attribute in headers) {
@@ -79,11 +90,15 @@ function Client(options: ClientOptions, isSecure: any) {
   this.headersProcessors = {
     processors: [],
     composeRequest: function (headers) {
-      this.processors.forEach((p) => { p.composeRequest(headers); });
+      this.processors.forEach((p) => {
+        p.composeRequest(headers);
+      });
     },
     parseResponse: function (headers) {
-      this.processors.forEach((p) => { p.parseResponse(headers); });
-    },
+      this.processors.forEach((p) => {
+        p.parseResponse(headers);
+      });
+    }
   };
   if (options.cookies) {
     this.cookies = new Cookies();
@@ -109,7 +124,9 @@ Client.prototype.methodCall = function methodCall(method, params, callback) {
   this.headersProcessors.composeRequest(options.headers);
   var request = transport.request(options, (response) => {
     const body = [];
-    response.on('data', (chunk) => { body.push(chunk); });
+    response.on('data', (chunk) => {
+      body.push(chunk);
+    });
 
     function __enrichError(err) {
       Object.defineProperty(err, 'req', { value: request });

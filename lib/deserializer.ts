@@ -1,7 +1,7 @@
 const sax = require('sax'),
   dateFormatter = require('./date_formatter');
 
-const Deserializer = function(encoding) {
+const Deserializer = function (encoding) {
   this.type = null;
   this.responseType = null;
   this.stack = [];
@@ -22,10 +22,10 @@ const Deserializer = function(encoding) {
   this.parser.on('error', this.onError.bind(this));
 };
 
-Deserializer.prototype.deserializeMethodResponse = function(stream, callback) {
+Deserializer.prototype.deserializeMethodResponse = function (stream, callback) {
   const that = this;
 
-  this.callback = function(error, result) {
+  this.callback = function (error, result) {
     if (error) {
       callback(error);
     } else if (result.length > 1) {
@@ -44,10 +44,10 @@ Deserializer.prototype.deserializeMethodResponse = function(stream, callback) {
   stream.pipe(this.parser);
 };
 
-Deserializer.prototype.deserializeMethodCall = function(stream, callback) {
+Deserializer.prototype.deserializeMethodCall = function (stream, callback) {
   const that = this;
 
-  this.callback = function(error, result) {
+  this.callback = function (error, result) {
     if (error) {
       callback(error);
     } else if (that.type !== 'methodcall') {
@@ -64,15 +64,17 @@ Deserializer.prototype.deserializeMethodCall = function(stream, callback) {
   stream.pipe(this.parser);
 };
 
-Deserializer.prototype.onDone = function() {
+Deserializer.prototype.onDone = function () {
   const that = this;
 
   if (!this.error) {
     if (this.type === null || this.marks.length) {
       this.callback(new Error('Invalid XML-RPC message'));
     } else if (this.responseType === 'fault') {
-      const createFault = function(fault) {
-        const error = new Error(`XML-RPC fault${fault.faultString ? `: ${fault.faultString}` : ''}`);
+      const createFault = function (fault) {
+        const error = new Error(
+          `XML-RPC fault${fault.faultString ? `: ${fault.faultString}` : ''}`
+        );
         error.code = fault.faultCode;
         error.faultCode = fault.faultCode;
         error.faultString = fault.faultString;
@@ -94,7 +96,7 @@ Deserializer.prototype.onDone = function() {
 //   2. Protocol errors: Invalid tags, invalid values &c. These happen in
 //      our code and we should tear down the IO and stop parsing.
 // Currently all errors end here. Guess I'll split it up.
-Deserializer.prototype.onError = function(msg) {
+Deserializer.prototype.onError = function (msg) {
   if (!this.error) {
     if (typeof msg === 'string') {
       this.error = new Error(msg);
@@ -105,7 +107,7 @@ Deserializer.prototype.onError = function(msg) {
   }
 };
 
-Deserializer.prototype.push = function(value) {
+Deserializer.prototype.push = function (value) {
   this.stack.push(value);
 };
 
@@ -113,23 +115,23 @@ Deserializer.prototype.push = function(value) {
 // SAX Handlers
 //==============================================================================
 
-Deserializer.prototype.onOpentag = function(node) {
+Deserializer.prototype.onOpentag = function (node) {
   if (node.name === 'ARRAY' || node.name === 'STRUCT') {
     this.marks.push(this.stack.length);
   }
   this.data = [];
-  this.value = (node.name === 'VALUE');
+  this.value = node.name === 'VALUE';
 };
 
-Deserializer.prototype.onText = function(text) {
+Deserializer.prototype.onText = function (text) {
   this.data.push(text);
 };
 
-Deserializer.prototype.onCDATA = function(cdata) {
+Deserializer.prototype.onCDATA = function (cdata) {
   this.data.push(cdata);
 };
 
-Deserializer.prototype.onClosetag = function(el) {
+Deserializer.prototype.onClosetag = function (el) {
   const data = this.data.join('');
   try {
     switch (el) {
@@ -197,12 +199,12 @@ Deserializer.prototype.onClosetag = function(el) {
   }
 };
 
-Deserializer.prototype.endNil = function(data) {
+Deserializer.prototype.endNil = function (data) {
   this.push(null);
   this.value = false;
 };
 
-Deserializer.prototype.endBoolean = function(data) {
+Deserializer.prototype.endBoolean = function (data) {
   if (data === '1') {
     this.push(true);
   } else if (data === '0') {
@@ -213,7 +215,7 @@ Deserializer.prototype.endBoolean = function(data) {
   this.value = false;
 };
 
-Deserializer.prototype.endInt = function(data) {
+Deserializer.prototype.endInt = function (data) {
   const value = parseInt(data, 10);
   if (isNaN(value)) {
     throw new Error(`Expected an integer but got '${data}'`);
@@ -223,7 +225,7 @@ Deserializer.prototype.endInt = function(data) {
   }
 };
 
-Deserializer.prototype.endDouble = function(data) {
+Deserializer.prototype.endDouble = function (data) {
   const value = parseFloat(data);
   if (isNaN(value)) {
     throw new Error(`Expected a double but got '${data}'`);
@@ -233,18 +235,18 @@ Deserializer.prototype.endDouble = function(data) {
   }
 };
 
-Deserializer.prototype.endString = function(data) {
+Deserializer.prototype.endString = function (data) {
   this.push(data);
   this.value = false;
 };
 
-Deserializer.prototype.endArray = function(data) {
+Deserializer.prototype.endArray = function (data) {
   const mark = this.marks.pop();
   this.stack.splice(mark, this.stack.length - mark, this.stack.slice(mark));
   this.value = false;
 };
 
-Deserializer.prototype.endStruct = function(data) {
+Deserializer.prototype.endStruct = function (data) {
   let mark = this.marks.pop(),
     struct = {},
     items = this.stack.slice(mark),
@@ -257,20 +259,20 @@ Deserializer.prototype.endStruct = function(data) {
   this.value = false;
 };
 
-Deserializer.prototype.endBase64 = function(data) {
+Deserializer.prototype.endBase64 = function (data) {
   const buffer = new Buffer(data, 'base64');
   this.push(buffer);
   this.value = false;
 };
 
-Deserializer.prototype.endDateTime = function(data) {
+Deserializer.prototype.endDateTime = function (data) {
   const date = dateFormatter.decodeIso8601(data);
   this.push(date);
   this.value = false;
 };
 
 const isInteger = /^-?\d+$/;
-Deserializer.prototype.endI8 = function(data) {
+Deserializer.prototype.endI8 = function (data) {
   if (!isInteger.test(data)) {
     throw new Error(`Expected integer (I8) value but got '${data}'`);
   } else {
@@ -278,29 +280,29 @@ Deserializer.prototype.endI8 = function(data) {
   }
 };
 
-Deserializer.prototype.endValue = function(data) {
+Deserializer.prototype.endValue = function (data) {
   if (this.value) {
     this.endString(data);
   }
 };
 
-Deserializer.prototype.endParams = function(data) {
+Deserializer.prototype.endParams = function (data) {
   this.responseType = 'params';
 };
 
-Deserializer.prototype.endFault = function(data) {
+Deserializer.prototype.endFault = function (data) {
   this.responseType = 'fault';
 };
 
-Deserializer.prototype.endMethodResponse = function(data) {
+Deserializer.prototype.endMethodResponse = function (data) {
   this.type = 'methodresponse';
 };
 
-Deserializer.prototype.endMethodName = function(data) {
+Deserializer.prototype.endMethodName = function (data) {
   this.methodname = data;
 };
 
-Deserializer.prototype.endMethodCall = function(data) {
+Deserializer.prototype.endMethodCall = function (data) {
   this.type = 'methodcall';
 };
 

@@ -1,8 +1,8 @@
-const CustomType = module.exports = function(raw) {
+const CustomType = (module.exports = function (raw) {
   this.raw = raw;
-};
+});
 
-CustomType.prototype.serialize = function(xml) {
+CustomType.prototype.serialize = function (xml) {
   return xml.ele(this.tagName).txt(this.raw);
 };
 

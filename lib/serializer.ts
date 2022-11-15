@@ -12,7 +12,7 @@ const xmlBuilder = require('xmlbuilder'),
  *                              otherwise null.
  *   - {String} xml           - The method call XML.
  */
-exports.serializeMethodCall = function(method, params, encoding) {
+exports.serializeMethodCall = function (method, params, encoding) {
   var params = params || [];
 
   const options = { version: '1.0', allowSurrogateChars: true };
@@ -21,7 +21,8 @@ exports.serializeMethodCall = function(method, params, encoding) {
     options.encoding = encoding;
   }
 
-  const xml = xmlBuilder.create('methodCall', options)
+  const xml = xmlBuilder
+    .create('methodCall', options)
     .ele('methodName')
     .txt(method)
     .up()
@@ -44,8 +45,9 @@ exports.serializeMethodCall = function(method, params, encoding) {
  *                              otherwise null.
  *   - {String} xml           - The method response XML.
  */
-exports.serializeMethodResponse = function(result) {
-  const xml = xmlBuilder.create('methodResponse', { version: '1.0', allowSurrogateChars: true })
+exports.serializeMethodResponse = function (result) {
+  const xml = xmlBuilder
+    .create('methodResponse', { version: '1.0', allowSurrogateChars: true })
     .ele('params')
     .ele('param');
 
@@ -55,8 +57,9 @@ exports.serializeMethodResponse = function(result) {
   return xml.doc().toString();
 };
 
-exports.serializeFault = function(fault) {
-  const xml = xmlBuilder.create('methodResponse', { version: '1.0', allowSurrogateChars: true })
+exports.serializeFault = function (fault) {
+  const xml = xmlBuilder
+    .create('methodResponse', { version: '1.0', allowSurrogateChars: true })
     .ele('fault');
 
   serializeValue(fault, xml);
@@ -144,13 +147,13 @@ function getNextItemsFrame(frame) {
         member = frame.xml.ele('member').ele('name').text(key).up();
       nextFrame = {
         value: frame.value[key],
-        xml: member,
+        xml: member
       };
     }
   } else if (frame.index < frame.value.length) {
     nextFrame = {
       value: frame.value[frame.index],
-      xml: frame.xml,
+      xml: frame.xml
     };
     frame.index++;
   }

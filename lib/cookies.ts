@@ -14,7 +14,7 @@ Cookies.prototype = {
    * @param {String} name cookie name
    * @return {String} cookie value or null
    */
-  get: function(name) {
+  get: function (name) {
     const cookie = this.cookies[name];
     if (cookie && this.checkNotExpired(name)) {
       return this.cookies[name].value;
@@ -30,22 +30,28 @@ Cookies.prototype = {
    *  - {Boolean} secure - is cookie secure or not (does not mean anything for now)
    *  - {Date} expires - cookie's expiration date. If specified then cookie will disappear after that date
    */
-  set: function(name, value, options) {
-    const cookie = typeof options === 'object'
-      ? { value: value, expires: options.expires, secure: options.secure || false, new: options.new || false }
-      : { value: value };
+  set: function (name, value, options) {
+    const cookie =
+      typeof options === 'object'
+        ? {
+            value: value,
+            expires: options.expires,
+            secure: options.secure || false,
+            new: options.new || false
+          }
+        : { value: value };
     if (this.checkNotExpired(name, cookie)) {
       this.cookies[name] = cookie;
     }
   },
 
   // For testing purposes
-  getExpirationDate: function(name) {
+  getExpirationDate: function (name) {
     return this.cookies[name] ? this.cookies[name].expires : null;
   },
 
   // Internal function
-  checkNotExpired: function(name, cookie) {
+  checkNotExpired: function (name, cookie) {
     if (typeof cookie === 'undefined') {
       cookie = this.cookies[name];
     }
@@ -62,7 +68,7 @@ Cookies.prototype = {
    * Also parses expiration date
    * @param headers
    */
-  parseResponse: function(headers) {
+  parseResponse: function (headers) {
     const cookies = headers['set-cookie'];
     if (cookies) {
       cookies.forEach((c) => {
@@ -86,7 +92,7 @@ Cookies.prototype = {
    * This call checks expiration dates and does not add expired cookies.
    * @param headers
    */
-  composeRequest: function(headers) {
+  composeRequest: function (headers) {
     if (Object.keys(this.cookies).length == 0) {
       return;
     }
@@ -97,11 +103,12 @@ Cookies.prototype = {
    *
    * @return {String} cookies as 'name=value' pairs joined by semicolon
    */
-  toString: function() {
+  toString: function () {
     return Object.keys(this.cookies)
       .filter(this.checkNotExpired.bind(this))
-      .map(name => `${name}=${this.cookies[name].value}`).join(';');
-  },
+      .map((name) => `${name}=${this.cookies[name].value}`)
+      .join(';');
+  }
 };
 
 module.exports = Cookies;

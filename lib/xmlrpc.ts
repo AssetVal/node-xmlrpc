@@ -16,7 +16,7 @@ const xmlrpc = exports;
  * @return {Client}
  * @see Client
  */
-xmlrpc.createClient = function(options) {
+xmlrpc.createClient = function (options) {
   return new Client(options, false);
 };
 
@@ -31,7 +31,7 @@ xmlrpc.createClient = function(options) {
  * @return {Client}
  * @see Client
  */
-xmlrpc.createSecureClient = function(options) {
+xmlrpc.createSecureClient = function (options) {
   return new Client(options, true);
 };
 
@@ -44,7 +44,7 @@ xmlrpc.createSecureClient = function(options) {
  * @return {Server}
  * @see Server
  */
-xmlrpc.createServer = function(options, callback) {
+xmlrpc.createServer = function (options, callback) {
   return new Server(options, false, callback);
 };
 
@@ -57,7 +57,7 @@ xmlrpc.createServer = function(options, callback) {
  * @return {Server}
  * @see Server
  */
-xmlrpc.createSecureServer = function(options, callback) {
+xmlrpc.createSecureServer = function (options, callback) {
   return new Server(options, true, callback);
 };
 

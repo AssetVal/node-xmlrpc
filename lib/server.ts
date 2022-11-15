@@ -21,10 +21,10 @@ const http = require('http'),
  * @return {Server}
  */
 function Server(options, isSecure, onListening) {
-  if ((this instanceof Server) === false) {
+  if (this instanceof Server === false) {
     return new Server(options, isSecure);
   }
-  onListening = onListening || function() {};
+  onListening = onListening || function () {};
   const that = this;
 
   // If a string URI is passed in, converts to URI fields
@@ -56,13 +56,14 @@ function Server(options, isSecure, onListening) {
     });
   }
 
-  this.httpServer = isSecure ? https.createServer(options, handleMethodCall)
+  this.httpServer = isSecure
+    ? https.createServer(options, handleMethodCall)
     : http.createServer(handleMethodCall);
 
   process.nextTick(() => {
     this.httpServer.listen(options.port, options.host, onListening);
   });
-  this.close = function(callback) {
+  this.close = function (callback) {
     this.httpServer.once('close', callback);
     this.httpServer.close();
   }.bind(this);
