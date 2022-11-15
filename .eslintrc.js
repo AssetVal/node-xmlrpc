@@ -20,6 +20,7 @@ module.exports = {
     'plugin:import/errors',
     'plugin:import/warnings',
     'plugin:@getify/proper-ternary/getify-says',
+    "prettier"
   ],
   rules: {
     '@typescript-eslint/explicit-module-boundary-types': 'off',

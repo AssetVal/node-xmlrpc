@@ -1,3 +1,6 @@
+# Ignore artifacts:
+build
+coverage
 .eslintrc.js
 node_modules
 ./node_modules
@@ -9,3 +12,4 @@ LICENSE
 package.lock
 .idea/
 node-xmlrpc.iml
+
