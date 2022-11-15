@@ -52,7 +52,6 @@
     "vows": "0.7.x"
   },
   "lint-staged": {
-    "*.js": "eslint --cache --fix",
-    "*.{js,css,md}": "prettier --write"
+    "./lib/*.ts": ["prettier --write", "eslint --cache --fix"]
   }
 }
