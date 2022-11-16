@@ -36,7 +36,7 @@ export default class Cookies {
    * Sets cookie's value and optional options
    * @param {String} name cookie's name
    * @param {String} value value
-   * @param {({ expires: Date; secure?: boolean; new?: boolean })|undefined} options with the following fields:
+   * @param {Object|undefined} options with the following fields:
    *  - {Boolean} secure - is cookie secure or not (does not mean anything for now)
    *  - {Date} expires - cookie's expiration date. If specified then cookie will disappear after that date
    */
