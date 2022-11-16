@@ -7,7 +7,7 @@
   },
   "main": "./lib/xmlrpc.js",
   "scripts": {
-    "prettier-format": "prettier --config .prettierrc.json 'lib/**/*.ts' --write",
+    "prettier-format": "prettier --config .prettierrc.json '**/*.ts' --write",
     "test": "vows 'test/*.js'",
     "prepare": "husky install"
   },
@@ -49,8 +49,8 @@
     "husky": "^8.0.2",
     "lint-staged": "^13.0.3",
     "prettier": "2.7.1",
-    "typescript": "^4.8.4",
-    "vows": "0.7.x"
+    "typescript": "^4.9.3",
+    "vows": "^0.8.3"
   },
   "lint-staged": {
     "./lib/*.ts": [

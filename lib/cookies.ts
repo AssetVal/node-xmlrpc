@@ -17,9 +17,6 @@ class Cookie {
   }
 }
 
-/**
- * A Es6 Class Version of the Cookies.js
- */
 export default class Cookies {
   cookies: Record<string, Cookie> = {};
 
@@ -31,9 +28,7 @@ export default class Cookies {
    */
   public get(name: string) {
     const cookie = this.cookies[name];
-    if (cookie && this.checkNotExpired(name)) {
-      return this.cookies[name].value;
-    }
+    if (cookie && this.checkNotExpired(name)) return this.cookies[name].value;
     return null;
   }
 
@@ -41,7 +36,7 @@ export default class Cookies {
    * Sets cookie's value and optional options
    * @param {String} name cookie's name
    * @param {String} value value
-   * @param {Object} options with the following fields:
+   * @param {({ expires: Date; secure?: boolean; new?: boolean })|undefined} options with the following fields:
    *  - {Boolean} secure - is cookie secure or not (does not mean anything for now)
    *  - {Date} expires - cookie's expiration date. If specified then cookie will disappear after that date
    */

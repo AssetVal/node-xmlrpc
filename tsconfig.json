@@ -102,6 +102,7 @@
   },
   "include": [
     "./lib/**/*.ts",
+    "./test/**/*.ts",
     "eslintrc.js"
   ],
 }
