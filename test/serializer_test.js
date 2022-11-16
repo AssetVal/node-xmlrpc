@@ -25,7 +25,7 @@ vows
             datetime: {
                 'with a regular datetime param': {
                     topic: function () {
-                        var value = new Date(2012, 5, 7, 11, 35, 10);
+                        var value = new Date(2012, 05, 07, 11, 35, 10);
                         return Serializer.serializeMethodCall('testMethod', [value]);
                     },
                     'contains the timestamp': assertXml('good_food/datetime_call.xml')
