@@ -204,11 +204,7 @@ vows
             },
             'contains the array': function (error, value) {
                 assert.isNull(error);
-                assert.deepEqual(value, [
-                    'system.listMethods',
-                    'system.methodSignature',
-                    'xmlrpc_dialect'
-                ]);
+                assert.deepEqual(value, ['system.listMethods', 'system.methodSignature', 'xmlrpc_dialect']);
             }
         },
         'with a utf-8 encoding': {

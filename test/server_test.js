@@ -66,10 +66,7 @@ vows
                         '<value><string>Param A</string></value>' +
                         '</param>' +
                         '<param>';
-                    var chunk2 = '<value><string>Param B</string></value>' +
-                        '</param>' +
-                        '</params>' +
-                        '</methodCall>';
+                    var chunk2 = '<value><string>Param B</string></value>' + '</param>' + '</params>' + '</methodCall>';
                     req.on('error', function (e) {
                         assert.isNull(e);
                     });

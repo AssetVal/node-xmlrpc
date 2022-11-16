@@ -31,12 +31,13 @@
   },
   "license": "MIT",
   "dependencies": {
-    "sax": "1.2.x",
+    "sax": "^1.2.4",
     "xmlbuilder": "8.2.x"
   },
   "devDependencies": {
     "@getify/eslint-plugin-proper-ternary": "^3.1.1",
     "@types/node": "^18.11.9",
+    "@types/sax": "^1.2.4",
     "@typescript-eslint/eslint-plugin": "^5.43.0",
     "@typescript-eslint/parser": "^5.43.0",
     "eslint": "^8.27.0",
@@ -54,8 +55,7 @@
   },
   "lint-staged": {
     "./lib/*.ts": [
-      "prettier --write",
-      "eslint --cache --fix"
+      "prettier --write"
     ]
   }
 }

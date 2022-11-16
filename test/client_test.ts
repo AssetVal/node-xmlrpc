@@ -4,12 +4,8 @@ var vows = require('vows'),
   Client = require('../lib/client'),
   fs = require('fs');
 
-const VALID_RESPONSE = fs.readFileSync(
-  __dirname + '/fixtures/good_food/string_response.xml'
-);
-const BROKEN_XML = fs.readFileSync(
-  __dirname + '/fixtures/bad_food/broken_xml.xml'
-);
+const VALID_RESPONSE = fs.readFileSync(__dirname + '/fixtures/good_food/string_response.xml');
+const BROKEN_XML = fs.readFileSync(__dirname + '/fixtures/bad_food/broken_xml.xml');
 
 vows
   .describe('Client')
@@ -21,10 +17,7 @@ vows
       // Test standard Client initialization
       'with URI options only': {
         topic: function () {
-          var client = new Client(
-            { host: 'localhost', port: 9999, path: '/' },
-            false
-          );
+          var client = new Client({ host: 'localhost', port: 9999, path: '/' }, false);
           return client.options;
         },
         'contains the standard headers': function (topic) {
@@ -94,15 +87,10 @@ vows
       // Test passing HTTP Basic authentication credentials
       'with basic auth passed': {
         topic: function () {
-          var client = new Client(
-            { basic_auth: { user: 'john', pass: '12345' } },
-            false
-          );
+          var client = new Client({ basic_auth: { user: 'john', pass: '12345' } }, false);
           return client.options.headers;
         },
-        "correctly encodes and sets the 'Authorization' header": function (
-          topic
-        ) {
+        "correctly encodes and sets the 'Authorization' header": function (topic) {
           assert.isNotNull(topic.Authorization);
           assert.equal(topic.Authorization, 'Basic am9objoxMjM0NQ==');
         }
@@ -121,10 +109,7 @@ vows
       // Test passing encoding
       'with an encoding passed': {
         topic: function () {
-          var client = new Client(
-            { url: 'http://localhost:9999', encoding: 'utf-8' },
-            false
-          );
+          var client = new Client({ url: 'http://localhost:9999', encoding: 'utf-8' }, false);
           return client.options;
         },
         'caches the encoding option': function (topic) {
@@ -139,10 +124,7 @@ vows
       // Test invalid internal URI to send method call to
       'with an invalid internal URI': {
         topic: function () {
-          var client = new Client(
-            { host: 'localhost', port: 9999, path: '/' },
-            false
-          );
+          var client = new Client({ host: 'localhost', port: 9999, path: '/' }, false);
           client.methodCall('getArray', null, this.callback);
         },
         'contains the error': function (error, value) {
@@ -227,20 +209,13 @@ vows
               response.end();
             })
             .listen(9092, 'localhost', function () {
-              var client = new Client(
-                { host: 'localhost', port: 9092, path: '/' },
-                false
-              );
+              var client = new Client({ host: 'localhost', port: 9092, path: '/' }, false);
               client.methodCall('listMethods', null, that.callback);
             });
         },
         'contains the array': function (error, value) {
           assert.isNull(error);
-          assert.deepEqual(value, [
-            'system.listMethods',
-            'system.methodSignature',
-            'xmlrpc_dialect'
-          ]);
+          assert.deepEqual(value, ['system.listMethods', 'system.methodSignature', 'xmlrpc_dialect']);
         }
       },
       'with a utf-8 encoding': {
@@ -336,10 +311,7 @@ vows
               });
             })
             .listen(9095, 'localhost', function () {
-              var client = new Client(
-                { host: 'localhost', port: 9095, path: '/' },
-                false
-              );
+              var client = new Client({ host: 'localhost', port: 9095, path: '/' }, false);
               client.methodCall('multiByte', ['ö'], function (error) {
                 that.callback(error, requestBody);
               });
@@ -365,10 +337,7 @@ vows
               response.end();
             })
             .listen(9099, 'localhost', function () {
-              var client = new Client(
-                { host: 'localhost', port: 9099, path: '/' },
-                false
-              );
+              var client = new Client({ host: 'localhost', port: 9099, path: '/' }, false);
               client.methodCall('unknown', null, function (error) {
                 that.callback(error);
               });
@@ -396,10 +365,7 @@ vows
               }
             })
             .listen(9096, 'localhost', function () {
-              var client = new Client(
-                { host: 'localhost', port: 9096, path: '/', cookies: true },
-                false
-              );
+              var client = new Client({ host: 'localhost', port: 9096, path: '/', cookies: true }, false);
               function cbIfError(err, result) {
                 if (err) that.callback(err, result);
               }
@@ -424,10 +390,7 @@ vows
               response.end();
             })
             .listen(9097, 'localhost', function () {
-              var client = new Client(
-                { host: 'localhost', port: 9097, path: '/' },
-                false
-              );
+              var client = new Client({ host: 'localhost', port: 9097, path: '/' }, false);
               client.methodCall('broken', null, that.callback);
             });
         },

@@ -86,9 +86,7 @@ vows_1.default
             topic: function () {
                 const cookies = new cookies_js_1.default();
                 cookies.parseResponse({
-                    'set-cookie': [
-                        ' name=value ;Expires=Wed, 01 Jan 2070 00:00:01 GMT '
-                    ]
+                    'set-cookie': [' name=value ;Expires=Wed, 01 Jan 2070 00:00:01 GMT ']
                 });
                 return cookies;
             },
@@ -103,9 +101,7 @@ vows_1.default
             topic: function () {
                 const cookies = new cookies_js_1.default();
                 cookies.parseResponse({
-                    'set-cookie': [
-                        ' name=value ;some=thing;Expires=Wed, 01 Jan 2070 00:00:01 GMT ;any=thing '
-                    ]
+                    'set-cookie': [' name=value ;some=thing;Expires=Wed, 01 Jan 2070 00:00:01 GMT ;any=thing ']
                 });
                 return cookies;
             },

@@ -4,10 +4,7 @@ class Cookie {
   secure?: boolean;
   new?: boolean;
 
-  constructor(
-    value: string,
-    options?: { expires?: Date; secure?: boolean; new?: boolean }
-  ) {
+  constructor(value: string, options?: { expires?: Date; secure?: boolean; new?: boolean }) {
     this.value = value;
     if (options) {
       this.expires = options.expires;
@@ -40,11 +37,7 @@ export default class Cookies {
    *  - {Boolean} secure - is cookie secure or not (does not mean anything for now)
    *  - {Date} expires - cookie's expiration date. If specified then cookie will disappear after that date
    */
-  public set(
-    name: string,
-    value: string,
-    options?: { expires: Date; secure?: boolean; new?: boolean }
-  ) {
+  public set(name: string, value: string, options?: { expires: Date; secure?: boolean; new?: boolean }) {
     if (this.checkNotExpired(name)) {
       this.cookies[name] = new Cookie(value, options);
     }
@@ -57,8 +50,7 @@ export default class Cookies {
 
   // Internal function
   private checkNotExpired(name: string, cookie?: Cookie | any) {
-    if (typeof cookie !== 'object' || !('expires' in cookie))
-      cookie = this.cookies[name] as Cookie;
+    if (typeof cookie !== 'object' || !('expires' in cookie)) cookie = this.cookies[name] as Cookie;
 
     const now = new Date();
     if (cookie instanceof Cookie && cookie.expires && now > cookie.expires) {
@@ -89,12 +81,7 @@ export default class Cookies {
         }
       });
 
-      if (cookiePair.length > 0)
-        this.set(
-          cookiePair[0].trim(),
-          cookiePair[1].trim(),
-          options as { expires: Date }
-        );
+      if (cookiePair.length > 0) this.set(cookiePair[0].trim(), cookiePair[1].trim(), options as { expires: Date });
     });
   }
 
@@ -115,7 +102,7 @@ export default class Cookies {
   public toString() {
     return Object.keys(this.cookies)
       .filter(this.checkNotExpired.bind(this))
-      .map(name => `${name}=${this.cookies[name].value}`)
+      .map((name) => `${name}=${this.cookies[name].value}`)
       .join(';');
   }
 }

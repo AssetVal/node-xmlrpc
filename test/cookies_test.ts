@@ -82,9 +82,7 @@ vows
         topic: function () {
           const cookies = new Cookies();
           cookies.parseResponse({
-            'set-cookie': [
-              ' name=value ;Expires=Wed, 01 Jan 2070 00:00:01 GMT '
-            ]
+            'set-cookie': [' name=value ;Expires=Wed, 01 Jan 2070 00:00:01 GMT ']
           });
           return cookies;
         },
@@ -92,19 +90,14 @@ vows
           assert.equal(cookies.get('name'), 'value');
         },
         'shall get expiration date of the cookie': function (cookies) {
-          assert.equal(
-            cookies.getExpirationDate('name').toUTCString(),
-            'Wed, 01 Jan 2070 00:00:01 GMT'
-          );
+          assert.equal(cookies.getExpirationDate('name').toUTCString(), 'Wed, 01 Jan 2070 00:00:01 GMT');
         }
       },
       'response with cookie with expiration date and other fields': {
         topic: function () {
           const cookies = new Cookies();
           cookies.parseResponse({
-            'set-cookie': [
-              ' name=value ;some=thing;Expires=Wed, 01 Jan 2070 00:00:01 GMT ;any=thing '
-            ]
+            'set-cookie': [' name=value ;some=thing;Expires=Wed, 01 Jan 2070 00:00:01 GMT ;any=thing ']
           });
           return cookies;
         },
@@ -112,10 +105,7 @@ vows
           assert.equal(cookies.get('name'), 'value');
         },
         'shall get expiration date of the cookie': function (cookies) {
-          assert.equal(
-            cookies.getExpirationDate('name').toUTCString(),
-            'Wed, 01 Jan 2070 00:00:01 GMT'
-          );
+          assert.equal(cookies.getExpirationDate('name').toUTCString(), 'Wed, 01 Jan 2070 00:00:01 GMT');
         }
       },
       'response with several cookies': {
@@ -160,12 +150,11 @@ vows
           cookies.set('c', 'd');
           return cookies;
         },
-        'shall set cookies header with name/value pairs separated by semicolon':
-          function (topic) {
-            const headers = {};
-            topic.composeRequest(headers);
-            assert.equal(headers.Cookie, 'a=b;c=d');
-          }
+        'shall set cookies header with name/value pairs separated by semicolon': function (topic) {
+          const headers = {};
+          topic.composeRequest(headers);
+          assert.equal(headers.Cookie, 'a=b;c=d');
+        }
       },
       'when some cookie is expired': {
         topic: function () {
@@ -176,9 +165,7 @@ vows
           cookies.set('expired', 'value', { expires: date });
           return cookies;
         },
-        'shall set cookies header with non-expired cookies only': function (
-          topic
-        ) {
+        'shall set cookies header with non-expired cookies only': function (topic) {
           const headers = {};
           topic.composeRequest(headers);
           assert.equal(headers.Cookie, 'new=one');

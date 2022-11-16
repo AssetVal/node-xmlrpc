@@ -45,6 +45,7 @@ module.exports = {
     'import/first': 'off',
     '@getify/proper-ternary/where': 'off',
     '@getify/proper-ternary/nested': ['error', { test: false, then: true, else: false }],
+    '@getify/proper-ternary/parens': 'off',
     'object-shorthand': 'off',
     'node/no-missing-import': 'off',
     'node/no-unsupported-features/es-syntax': [
@@ -94,10 +95,7 @@ module.exports = {
     'no-underscore-dangle': 'off',
     'prefer-destructuring': 'off',
     'space-before-blocks': 'off',
-    'space-before-function-paren': [
-      'error',
-      'never',
-    ],
+    'space-before-function-paren': ['error', {"anonymous": "always", "named": "never", "asyncArrow": "always"}],
     'prefer-rest-params': 'off',
     'no-undef': 'off',
     default: 'off',

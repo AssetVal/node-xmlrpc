@@ -74,11 +74,7 @@ vows
               '<value><string>Param A</string></value>' +
               '</param>' +
               '<param>';
-            var chunk2 =
-              '<value><string>Param B</string></value>' +
-              '</param>' +
-              '</params>' +
-              '</methodCall>';
+            var chunk2 = '<value><string>Param B</string></value>' + '</param>' + '</params>' + '</methodCall>';
             req.on('error', function (e) {
               assert.isNull(e);
             });
@@ -117,11 +113,7 @@ vows
         var that = this;
         var server = new Server({ port: 9995, path: '/' }, false, function () {
           server.close(function () {
-            var server2 = new Server(
-              { port: 9995, path: '/' },
-              false,
-              that.callback
-            );
+            var server2 = new Server({ port: 9995, path: '/' }, false, that.callback);
           });
         });
       },

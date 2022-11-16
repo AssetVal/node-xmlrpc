@@ -56,9 +56,7 @@ function Server(options, isSecure, onListening) {
     });
   }
 
-  this.httpServer = isSecure
-    ? https.createServer(options, handleMethodCall)
-    : http.createServer(handleMethodCall);
+  this.httpServer = isSecure ? https.createServer(options, handleMethodCall) : http.createServer(handleMethodCall);
 
   process.nextTick(() => {
     this.httpServer.listen(options.port, options.host, onListening);

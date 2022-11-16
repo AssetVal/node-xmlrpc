@@ -23,8 +23,7 @@ vows
                     return date_formatter.encodeIso8601(d);
                 },
                 'must return a properly formatted string': function (e, str) {
-                    var reStr = '^\\d{4}[-]?\\d{2}[-]?\\d{2}T\\d{2}[:]?\\d{2}[:]?\\d{2}' +
-                        '(\\.\\d{3})?([+-]\\d{2}[:]\\d{2})?$';
+                    var reStr = '^\\d{4}[-]?\\d{2}[-]?\\d{2}T\\d{2}[:]?\\d{2}[:]?\\d{2}' + '(\\.\\d{3})?([+-]\\d{2}[:]\\d{2})?$';
                     assert.isNull(e);
                     assert.isString(str);
                     assert.match(str, new RegExp(reStr));
@@ -45,8 +44,7 @@ vows
                     return date_formatter.encodeIso8601(d);
                 },
                 'must return a properly formatted string': function (e, str) {
-                    var reStr = '^\\d{4}[-]?\\d{2}[-]?\\d{2}T\\d{2}[:]?\\d{2}[:]?\\d{2}' +
-                        '(\\.\\d{3})?Z$';
+                    var reStr = '^\\d{4}[-]?\\d{2}[-]?\\d{2}T\\d{2}[:]?\\d{2}[:]?\\d{2}' + '(\\.\\d{3})?Z$';
                     assert.isNull(e);
                     assert.isString(str);
                     assert.match(str, new RegExp(reStr));

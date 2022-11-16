@@ -1,309 +1,302 @@
-const sax = require('sax'),
-  dateFormatter = require('./date_formatter');
+import { SAXStream, createStream } from 'sax';
+import dateFormatter from './date_formatter';
 
-const Deserializer = function (encoding) {
-  this.type = null;
-  this.responseType = null;
-  this.stack = [];
-  this.marks = [];
-  this.data = [];
-  this.methodname = null;
-  this.encoding = encoding || 'utf8';
-  this.value = false;
-  this.callback = null;
-  this.error = null;
+export default class Deserializer {
+  type: string | null = null;
+  responseType: string | null = null;
+  stack: Array<any> = [];
+  marks: Array<number> = [];
+  data: Array<string> = [];
+  methodname: string | null = null;
+  encoding: string;
+  value = false;
+  callback: ((error?: unknown, results?: unknown) => void) | null = null;
+  error: unknown = null;
+  parser: SAXStream = createStream();
 
-  this.parser = sax.createStream();
-  this.parser.on('opentag', this.onOpentag.bind(this));
-  this.parser.on('closetag', this.onClosetag.bind(this));
-  this.parser.on('text', this.onText.bind(this));
-  this.parser.on('cdata', this.onCDATA.bind(this));
-  this.parser.on('end', this.onDone.bind(this));
-  this.parser.on('error', this.onError.bind(this));
-};
+  constructor(encoding?: string) {
+    this.encoding = encoding ?? 'utf8';
 
-Deserializer.prototype.deserializeMethodResponse = function (stream, callback) {
-  const that = this;
+    this.parser.on('opentag', this.onOpentag.bind(this));
+    this.parser.on('closetag', this.onClosetag.bind(this));
+    this.parser.on('text', this.onText.bind(this));
+    this.parser.on('cdata', this.onCDATA.bind(this));
+    this.parser.on('end', this.onDone.bind(this));
+    this.parser.on('error', this.onError.bind(this));
+  }
 
-  this.callback = function (error, result) {
-    if (error) {
-      callback(error);
-    } else if (result.length > 1) {
-      callback(new Error('Response has more than one param'));
-    } else if (that.type !== 'methodresponse') {
-      callback(new Error('Not a method response'));
-    } else if (!that.responseType) {
-      callback(new Error('Invalid method response'));
-    } else {
-      callback(null, result[0]);
-    }
-  };
+  deserializeMethodResponse(stream: any, callback: any) {
+    const that = this;
 
-  stream.setEncoding(this.encoding);
-  stream.on('error', this.onError.bind(this));
-  stream.pipe(this.parser);
-};
+    this.callback = function (error, result) {
+      if (error) {
+        callback(error);
+      } else if (result.length > 1) {
+        callback(new Error('Response has more than one param'));
+      } else if (that.type !== 'methodresponse') {
+        callback(new Error('Not a method response'));
+      } else if (!that.responseType) {
+        callback(new Error('Invalid method response'));
+      } else {
+        callback(null, result[0]);
+      }
+    };
 
-Deserializer.prototype.deserializeMethodCall = function (stream, callback) {
-  const that = this;
+    stream.setEncoding(this.encoding);
+    stream.on('error', this.onError.bind(this));
+    stream.pipe(this.parser);
+  }
 
-  this.callback = function (error, result) {
-    if (error) {
-      callback(error);
-    } else if (that.type !== 'methodcall') {
-      callback(new Error('Not a method call'));
-    } else if (!that.methodname) {
-      callback(new Error('Method call did not contain a method name'));
-    } else {
-      callback(null, that.methodname, result);
-    }
-  };
+  deserializeMethodCall(stream: any, callback: any) {
+    const that = this;
 
-  stream.setEncoding(this.encoding);
-  stream.on('error', this.onError.bind(this));
-  stream.pipe(this.parser);
-};
+    this.callback = function (error, result) {
+      if (error) {
+        callback(error);
+      } else if (that.type !== 'methodcall') {
+        callback(new Error('Not a method call'));
+      } else if (!that.methodname) {
+        callback(new Error('Method call did not contain a method name'));
+      } else {
+        callback(null, that.methodname, result);
+      }
+    };
 
-Deserializer.prototype.onDone = function () {
-  const that = this;
+    stream.setEncoding(this.encoding);
+    stream.on('error', this.onError.bind(this));
+    stream.pipe(this.parser);
+  }
 
-  if (!this.error) {
-    if (this.type === null || this.marks.length) {
-      this.callback(new Error('Invalid XML-RPC message'));
-    } else if (this.responseType === 'fault') {
-      const createFault = function (fault) {
-        const error = new Error(
-          `XML-RPC fault${fault.faultString ? `: ${fault.faultString}` : ''}`
-        );
-        error.code = fault.faultCode;
-        error.faultCode = fault.faultCode;
-        error.faultString = fault.faultString;
-        return error;
-      };
-      this.callback(createFault(this.stack[0]));
-    } else {
-      this.callback(undefined, this.stack);
+  onDone() {
+    const that = this;
+
+    if (!this.error) {
+      if (this.type === null || this.marks.length) {
+        if (this.callback) this.callback(new Error('Invalid XML-RPC message'));
+      } else if (this.responseType === 'fault') {
+        const createFault = function (fault: { faultString: any; faultCode: any }) {
+          const error = new Error(`XML-RPC fault${fault.faultString ? `: ${fault.faultString}` : ''}`);
+          error.code = fault.faultCode;
+          error.faultCode = fault.faultCode;
+          error.faultString = fault.faultString;
+          return error;
+        };
+        if (this.callback) this.callback(createFault(this.stack[0]));
+      } else {
+        if (this.callback) this.callback(undefined, this.stack);
+      }
     }
   }
-};
 
-// TODO:
-// Error handling needs a little thinking. There are two different kinds of
-// errors:
-//   1. Low level errors like network, stream or xml errors. These don't
-//      require special treatment. They only need to be forwarded. The IO
-//      is already stopped in these cases.
-//   2. Protocol errors: Invalid tags, invalid values &c. These happen in
-//      our code and we should tear down the IO and stop parsing.
-// Currently all errors end here. Guess I'll split it up.
-Deserializer.prototype.onError = function (msg) {
-  if (!this.error) {
-    if (typeof msg === 'string') {
-      this.error = new Error(msg);
-    } else {
-      this.error = msg;
+  // TODO:
+  // Error handling needs a little thinking. There are two different kinds of
+  // errors:
+  //   1. Low level errors like network, stream or xml errors. These don't
+  //      require special treatment. They only need to be forwarded. The IO
+  //      is already stopped in these cases.
+  //   2. Protocol errors: Invalid tags, invalid values &c. These happen in
+  //      our code and we should tear down the IO and stop parsing.
+  // Currently all errors end here. Guess I'll split it up.
+  onError(msg: unknown) {
+    if (!this.error) {
+      if (typeof msg === 'string') {
+        this.error = new Error(msg);
+      } else {
+        this.error = msg;
+      }
+      if (this.callback) this.callback(this.error);
     }
-    this.callback(this.error);
   }
-};
 
-Deserializer.prototype.push = function (value) {
-  this.stack.push(value);
-};
-
-//==============================================================================
-// SAX Handlers
-//==============================================================================
-
-Deserializer.prototype.onOpentag = function (node) {
-  if (node.name === 'ARRAY' || node.name === 'STRUCT') {
-    this.marks.push(this.stack.length);
+  push(value: string | number | null | boolean | Date | Buffer) {
+    this.stack.push(value);
   }
-  this.data = [];
-  this.value = node.name === 'VALUE';
-};
 
-Deserializer.prototype.onText = function (text) {
-  this.data.push(text);
-};
+  //==============================================================================
+  // SAX Handlers
+  //==============================================================================
 
-Deserializer.prototype.onCDATA = function (cdata) {
-  this.data.push(cdata);
-};
-
-Deserializer.prototype.onClosetag = function (el) {
-  const data = this.data.join('');
-  try {
-    switch (el) {
-      case 'BOOLEAN':
-        this.endBoolean(data);
-        break;
-      case 'INT':
-      case 'I4':
-        this.endInt(data);
-        break;
-      case 'I8':
-        this.endI8(data);
-        break;
-      case 'DOUBLE':
-        this.endDouble(data);
-        break;
-      case 'STRING':
-      case 'NAME':
-        this.endString(data);
-        break;
-      case 'ARRAY':
-        this.endArray(data);
-        break;
-      case 'STRUCT':
-        this.endStruct(data);
-        break;
-      case 'BASE64':
-        this.endBase64(data);
-        break;
-      case 'DATETIME.ISO8601':
-        this.endDateTime(data);
-        break;
-      case 'VALUE':
-        this.endValue(data);
-        break;
-      case 'PARAMS':
-        this.endParams(data);
-        break;
-      case 'FAULT':
-        this.endFault(data);
-        break;
-      case 'METHODRESPONSE':
-        this.endMethodResponse(data);
-        break;
-      case 'METHODNAME':
-        this.endMethodName(data);
-        break;
-      case 'METHODCALL':
-        this.endMethodCall(data);
-        break;
-      case 'NIL':
-        this.endNil(data);
-        break;
-      case 'DATA':
-      case 'PARAM':
-      case 'MEMBER':
-        // Ignored by design
-        break;
-      default:
-        this.onError(`Unknown XML-RPC tag '${el}'`);
-        break;
+  onOpentag(node: { name: string }) {
+    if (node.name === 'ARRAY' || node.name === 'STRUCT') {
+      this.marks.push(this.stack.length);
     }
-  } catch (e) {
-    this.onError(e);
+    this.data = [];
+    this.value = node.name === 'VALUE';
   }
-};
 
-Deserializer.prototype.endNil = function (data) {
-  this.push(null);
-  this.value = false;
-};
-
-Deserializer.prototype.endBoolean = function (data) {
-  if (data === '1') {
-    this.push(true);
-  } else if (data === '0') {
-    this.push(false);
-  } else {
-    throw new Error(`Illegal boolean value '${data}'`);
+  onText(text: string) {
+    this.data.push(text);
   }
-  this.value = false;
-};
+  onCDATA(cdata: string) {
+    this.data.push(cdata);
+  }
 
-Deserializer.prototype.endInt = function (data) {
-  const value = parseInt(data, 10);
-  if (isNaN(value)) {
-    throw new Error(`Expected an integer but got '${data}'`);
-  } else {
-    this.push(value);
+  onClosetag(el: string) {
+    const data = this.data.join('');
+
+    try {
+      switch (el) {
+        case 'BOOLEAN':
+          this.endBoolean(data);
+          break;
+        case 'INT':
+        case 'I4':
+          this.endInt(data);
+          break;
+        case 'I8':
+          this.endI8(data);
+          break;
+        case 'DOUBLE':
+          this.endDouble(data);
+          break;
+        case 'STRING':
+        case 'NAME':
+          this.endString(data);
+          break;
+        case 'ARRAY':
+          this.endArray();
+          break;
+        case 'STRUCT':
+          this.endStruct();
+          break;
+        case 'BASE64':
+          this.endBase64(data);
+          break;
+        case 'DATETIME.ISO8601':
+          this.endDateTime(data);
+          break;
+        case 'VALUE':
+          this.endValue(data);
+          break;
+        case 'PARAMS':
+          this.endParams();
+          break;
+        case 'FAULT':
+          this.endFault();
+          break;
+        case 'METHODRESPONSE':
+          this.endMethodResponse();
+          break;
+        case 'METHODNAME':
+          this.endMethodName(data);
+          break;
+        case 'METHODCALL':
+          this.endMethodCall();
+          break;
+        case 'NIL':
+          this.endNil();
+          break;
+        case 'DATA':
+        case 'PARAM':
+        case 'MEMBER':
+          // Ignored by design
+          break;
+        default:
+          this.onError(`Unknown XML-RPC tag '${el}'`);
+          break;
+      }
+    } catch (e) {
+      this.onError(e);
+    }
+  }
+
+  endNil() {
+    this.push(null);
     this.value = false;
   }
-};
 
-Deserializer.prototype.endDouble = function (data) {
-  const value = parseFloat(data);
-  if (isNaN(value)) {
-    throw new Error(`Expected a double but got '${data}'`);
-  } else {
-    this.push(value);
+  endBoolean(data: string) {
+    if (data === '1') {
+      this.push(true);
+    } else if (data === '0') {
+      this.push(false);
+    } else {
+      throw new Error(`Illegal boolean value '${data}'`);
+    }
     this.value = false;
   }
-};
 
-Deserializer.prototype.endString = function (data) {
-  this.push(data);
-  this.value = false;
-};
-
-Deserializer.prototype.endArray = function (data) {
-  const mark = this.marks.pop();
-  this.stack.splice(mark, this.stack.length - mark, this.stack.slice(mark));
-  this.value = false;
-};
-
-Deserializer.prototype.endStruct = function (data) {
-  let mark = this.marks.pop(),
-    struct = {},
-    items = this.stack.slice(mark),
-    i = 0;
-
-  for (; i < items.length; i += 2) {
-    struct[items[i]] = items[i + 1];
+  endInt(data: string) {
+    const value = parseInt(data, 10);
+    if (Number.isNaN(value)) {
+      throw new Error(`Expected an integer but got '${data}'`);
+    } else {
+      this.push(value);
+      this.value = false;
+    }
   }
-  this.stack.splice(mark, this.stack.length - mark, struct);
-  this.value = false;
-};
 
-Deserializer.prototype.endBase64 = function (data) {
-  const buffer = new Buffer(data, 'base64');
-  this.push(buffer);
-  this.value = false;
-};
-
-Deserializer.prototype.endDateTime = function (data) {
-  const date = dateFormatter.decodeIso8601(data);
-  this.push(date);
-  this.value = false;
-};
-
-const isInteger = /^-?\d+$/;
-Deserializer.prototype.endI8 = function (data) {
-  if (!isInteger.test(data)) {
-    throw new Error(`Expected integer (I8) value but got '${data}'`);
-  } else {
-    this.endString(data);
+  endDouble(data: string) {
+    const value = parseFloat(data);
+    if (Number.isNaN(value)) {
+      throw new Error(`Expected a double but got '${data}'`);
+    } else {
+      this.push(value);
+      this.value = false;
+    }
   }
-};
 
-Deserializer.prototype.endValue = function (data) {
-  if (this.value) {
-    this.endString(data);
+  endString(data: string) {
+    this.push(data);
+    this.value = false;
   }
-};
 
-Deserializer.prototype.endParams = function (data) {
-  this.responseType = 'params';
-};
+  endArray() {
+    const mark = this.marks.pop() as number;
+    this.stack.splice(mark, this.stack.length - mark, this.stack.slice(mark));
+    this.value = false;
+  }
 
-Deserializer.prototype.endFault = function (data) {
-  this.responseType = 'fault';
-};
+  endStruct() {
+    const mark = this.marks.pop() as number;
+    const struct = {};
+    const items = this.stack.slice(mark);
 
-Deserializer.prototype.endMethodResponse = function (data) {
-  this.type = 'methodresponse';
-};
+    for (let i = 0; i < items.length; i += 2) {
+      struct[items[i]] = items[i + 1];
+    }
 
-Deserializer.prototype.endMethodName = function (data) {
-  this.methodname = data;
-};
+    this.stack.splice(mark, this.stack.length - mark, struct);
+    this.value = false;
+  }
 
-Deserializer.prototype.endMethodCall = function (data) {
-  this.type = 'methodcall';
-};
+  endBase64(data: string) {
+    const buffer = Buffer.from(data, 'base64');
+    this.push(buffer);
+    this.value = false;
+  }
 
-module.exports = Deserializer;
+  endDateTime(data: string) {
+    this.push(dateFormatter.decodeIso8601(data));
+    this.value = false;
+  }
+
+  endI8(data: string) {
+    const isInteger = /^-?\d+$/;
+
+    if (!isInteger.test(data)) {
+      throw new Error(`Expected integer (I8) value but got '${data}'`);
+    } else {
+      this.endString(data);
+    }
+  }
+
+  endValue(data: string) {
+    if (this.value) this.endString(data);
+  }
+  endParams() {
+    this.responseType = 'params';
+  }
+  endFault() {
+    this.responseType = 'fault';
+  }
+  endMethodResponse() {
+    this.type = 'methodresponse';
+  }
+  endMethodName(data: string) {
+    this.methodname = data;
+  }
+  endMethodCall() {
+    this.type = 'methodcall';
+  }
+}

@@ -12,5 +12,13 @@
     "**/*.js": false,
     "**/*.js.map": true
   },
-  "explorerExclude.backup": {}
+  "explorerExclude.backup": {},
+  "cSpell.words": [
+    "customtype",
+    "Datetime",
+    "methodcall",
+    "methodresponse",
+    "opentag",
+    "xmlbuilder"
+  ]
 }

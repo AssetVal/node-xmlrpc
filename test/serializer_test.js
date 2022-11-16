@@ -1,7 +1,18 @@
 "use strict";
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var vows = require('vows'), path = require('path'), fs = require('fs'), assert = require('assert'), Serializer = require('../lib/serializer'), CustomType = require('../lib/customtype'), util = require('util');
-vows
+const vows_1 = __importDefault(require("vows"));
+const path_1 = __importDefault(require("path"));
+const fs_1 = __importDefault(require("fs"));
+const assert_1 = __importDefault(require("assert"));
+const serializer_1 = require("../lib/serializer");
+const customtype_1 = __importDefault(require("../lib/customtype"));
+const util_1 = __importDefault(require("util"));
+vows_1.default
     .describe('Serializer')
     .addBatch({
     'serializeMethodCall() called with': {
@@ -9,15 +20,15 @@ vows
             boolean: {
                 'with a true boolean param': {
                     topic: function () {
-                        var value = true;
-                        return Serializer.serializeMethodCall('testMethod', [value]);
+                        const value = true;
+                        return (0, serializer_1.serializeMethodCall)('testMethod', [value]);
                     },
                     'contains the value 1': assertXml('good_food/boolean_true_call.xml')
                 },
                 'with a false boolean param': {
                     topic: function () {
-                        var value = false;
-                        return Serializer.serializeMethodCall('testMethod', [value]);
+                        const value = false;
+                        return (0, serializer_1.serializeMethodCall)('testMethod', [value]);
                     },
                     'contains the value 0': assertXml('good_food/boolean_false_call.xml')
                 }
@@ -25,8 +36,8 @@ vows
             datetime: {
                 'with a regular datetime param': {
                     topic: function () {
-                        var value = new Date(2012, 05, 07, 11, 35, 10);
-                        return Serializer.serializeMethodCall('testMethod', [value]);
+                        const value = new Date(2012, 5, 7, 11, 35, 10);
+                        return (0, serializer_1.serializeMethodCall)('testMethod', [value]);
                     },
                     'contains the timestamp': assertXml('good_food/datetime_call.xml')
                 }
@@ -34,8 +45,8 @@ vows
             base64: {
                 'with a base64 param': {
                     topic: function () {
-                        var value = new Buffer('dGVzdGluZw==', 'base64');
-                        return Serializer.serializeMethodCall('testMethod', [value]);
+                        const value = Buffer.from('dGVzdGluZw==', 'base64');
+                        return (0, serializer_1.serializeMethodCall)('testMethod', [value]);
                     },
                     'contains the base64 string': assertXml('good_food/base64_call.xml')
                 }
@@ -43,15 +54,15 @@ vows
             double: {
                 'with a positive double param': {
                     topic: function () {
-                        var value = 17.5;
-                        return Serializer.serializeMethodCall('testMethod', [value]);
+                        const value = 17.5;
+                        return (0, serializer_1.serializeMethodCall)('testMethod', [value]);
                     },
                     'contains the positive double': assertXml('good_food/double_positive_call.xml')
                 },
                 'with a negative double param': {
                     topic: function () {
-                        var value = -32.7777;
-                        return Serializer.serializeMethodCall('testMethod', [value]);
+                        const value = -32.7777;
+                        return (0, serializer_1.serializeMethodCall)('testMethod', [value]);
                     },
                     'contains the negative double': assertXml('good_food/double_negative_call.xml')
                 }
@@ -59,22 +70,22 @@ vows
             integer: {
                 'with a positive integer param': {
                     topic: function () {
-                        var value = 17;
-                        return Serializer.serializeMethodCall('testMethod', [value]);
+                        const value = 17;
+                        return (0, serializer_1.serializeMethodCall)('testMethod', [value]);
                     },
                     'contains the positive integer': assertXml('good_food/int_positive_call.xml')
                 },
                 'with a negative integer param': {
                     topic: function () {
-                        var value = -32;
-                        return Serializer.serializeMethodCall('testMethod', [value]);
+                        const value = -32;
+                        return (0, serializer_1.serializeMethodCall)('testMethod', [value]);
                     },
                     'contains the negative integer': assertXml('good_food/int_negative_call.xml')
                 },
                 'with an integer param of 0': {
                     topic: function () {
-                        var value = 0;
-                        return Serializer.serializeMethodCall('testMethod', [value]);
+                        const value = 0;
+                        return (0, serializer_1.serializeMethodCall)('testMethod', [value]);
                     },
                     'contains 0': assertXml('good_food/int_zero_call.xml')
                 }
@@ -82,8 +93,8 @@ vows
             nil: {
                 'with a null param': {
                     topic: function () {
-                        var value = null;
-                        return Serializer.serializeMethodCall('testMethod', [value]);
+                        const value = null;
+                        return (0, serializer_1.serializeMethodCall)('testMethod', [value]);
                     },
                     'contains the nil': assertXml('good_food/nil_call.xml')
                 }
@@ -91,36 +102,36 @@ vows
             string: {
                 'with a regular string param': {
                     topic: function () {
-                        var value = 'testString';
-                        return Serializer.serializeMethodCall('testMethod', [value]);
+                        const value = 'testString';
+                        return (0, serializer_1.serializeMethodCall)('testMethod', [value]);
                     },
                     'contains the string': assertXml('good_food/string_call.xml')
                 },
                 'with a string param that requires CDATA': {
                     topic: function () {
-                        var value = '<html><body>Congrats</body></html>';
-                        return Serializer.serializeMethodCall('testCDATAMethod', [value]);
+                        const value = '<html><body>Congrats</body></html>';
+                        return (0, serializer_1.serializeMethodCall)('testCDATAMethod', [value]);
                     },
                     'contains the CDATA-wrapped string': assertXml('good_food/string_cdata_call.xml')
                 },
                 'with a multiline string param that requires CDATA': {
                     topic: function () {
-                        var value = '<html>\n<head><title>Go testing!</title></head>\n<body>Congrats</body>\n</html>';
-                        return Serializer.serializeMethodCall('testCDATAMethod', [value]);
+                        const value = '<html>\n<head><title>Go testing!</title></head>\n<body>Congrats</body>\n</html>';
+                        return (0, serializer_1.serializeMethodCall)('testCDATAMethod', [value]);
                     },
                     'contains the CDATA-wrapped string': assertXml('good_food/string_multiline_cdata_call.xml')
                 },
                 'with an empty string': {
                     topic: function () {
-                        var value = '';
-                        return Serializer.serializeMethodCall('testMethod', [value]);
+                        const value = '';
+                        return (0, serializer_1.serializeMethodCall)('testMethod', [value]);
                     },
                     'contains the empty string': assertXml('good_food/string_empty_call.xml')
                 },
                 'with a string contains emoji': {
                     topic: function () {
-                        var value = new Buffer('f09f9881', 'hex').toString('utf-8');
-                        return Serializer.serializeMethodCall('testMethod', [value]);
+                        const value = Buffer.from('f09f9881', 'hex').toString('utf-8');
+                        return (0, serializer_1.serializeMethodCall)('testMethod', [value]);
                     },
                     'contains a smiley': assertXml('good_food/string_emoji.xml')
                 }
@@ -128,8 +139,8 @@ vows
             undefined: {
                 'with an undefined param': {
                     topic: function () {
-                        var value = undefined;
-                        return Serializer.serializeMethodCall('testMethod', [value]);
+                        const value = undefined;
+                        return (0, serializer_1.serializeMethodCall)('testMethod', [value]);
                     },
                     'contains the empty value': assertXml('good_food/undefined_call.xml')
                 }
@@ -139,8 +150,8 @@ vows
             array: {
                 'with a simple array': {
                     topic: function () {
-                        var value = ['string1', 3];
-                        return Serializer.serializeMethodCall('testMethod', [value]);
+                        const value = ['string1', 3];
+                        return (0, serializer_1.serializeMethodCall)('testMethod', [value]);
                     },
                     'contains the array': assertXml('good_food/array_call.xml')
                 }
@@ -148,33 +159,33 @@ vows
             struct: {
                 'with a one-level struct': {
                     topic: function () {
-                        var value = {
+                        const value = {
                             stringName: 'string1',
                             intName: 3
                         };
-                        return Serializer.serializeMethodCall('testMethod', [value]);
+                        return (0, serializer_1.serializeMethodCall)('testMethod', [value]);
                     },
                     'contains the struct': assertXml('good_food/struct_call.xml')
                 },
                 'with a one-level struct and an empty property name': {
                     topic: function () {
-                        var value = {
+                        const value = {
                             stringName: '',
                             intName: 3
                         };
-                        return Serializer.serializeMethodCall('testMethod', [value]);
+                        return (0, serializer_1.serializeMethodCall)('testMethod', [value]);
                     },
                     'contains the struct': assertXml('good_food/struct_empty_property_call.xml')
                 },
                 'with a two-level struct': {
                     topic: function () {
-                        var value = {
+                        const value = {
                             stringName: 'string1',
                             objectName: {
                                 intName: 4
                             }
                         };
-                        return Serializer.serializeMethodCall('testMethod', [value]);
+                        return (0, serializer_1.serializeMethodCall)('testMethod', [value]);
                     },
                     'contains the struct': assertXml('good_food/struct_nested_call.xml')
                 }
@@ -183,29 +194,29 @@ vows
         CustomType: {
             default: {
                 topic: function () {
-                    var value = new CustomType('testCustomType');
-                    return Serializer.serializeMethodCall('testMethod', [value]);
+                    const value = new customtype_1.default('testCustomType');
+                    return (0, serializer_1.serializeMethodCall)('testMethod', [value]);
                 },
                 'contains the customType': assertXml('good_food/customtype_call.xml')
             },
             extended: {
                 topic: function () {
-                    var ExtendedCustomType = function (raw) {
-                        raw = 'extended' + raw;
-                        CustomType.call(this, raw);
+                    const ExtendedCustomType = function (raw) {
+                        raw = `extended${raw}`;
+                        customtype_1.default.call(this, raw);
                     };
-                    util.inherits(ExtendedCustomType, CustomType);
+                    util_1.default.inherits(ExtendedCustomType, customtype_1.default);
                     ExtendedCustomType.prototype.tagName = 'extendedCustomType';
-                    var value = new ExtendedCustomType('TestCustomType');
-                    return Serializer.serializeMethodCall('testMethod', [value]);
+                    const value = new ExtendedCustomType('TestCustomType');
+                    return (0, serializer_1.serializeMethodCall)('testMethod', [value]);
                 },
                 'contains the customType': assertXml('good_food/customtype_extended_call.xml')
             }
         },
         'utf-8 encoding': {
             topic: function () {
-                var value = '\x46\x6F\x6F';
-                return Serializer.serializeMethodCall('testMethod', [value], 'utf-8');
+                const value = '\x46\x6F\x6F';
+                return (0, serializer_1.serializeMethodCall)('testMethod', [value], 'utf-8');
             },
             'contains the encoding attribute': assertXml('good_food/encoded_call.xml')
         }
@@ -215,15 +226,15 @@ vows
             boolean: {
                 'with a true boolean param': {
                     topic: function () {
-                        var value = true;
-                        return Serializer.serializeMethodResponse(value);
+                        const value = true;
+                        return (0, serializer_1.serializeMethodResponse)(value);
                     },
                     'contains the value 1': assertXml('good_food/boolean_true_response.xml')
                 },
                 'with a false boolean param': {
                     topic: function () {
-                        var value = false;
-                        return Serializer.serializeMethodResponse(value);
+                        const value = false;
+                        return (0, serializer_1.serializeMethodResponse)(value);
                     },
                     'contains the value 0': assertXml('good_food/boolean_false_response.xml')
                 }
@@ -231,8 +242,8 @@ vows
             datetime: {
                 'with a regular datetime param': {
                     topic: function () {
-                        var value = new Date(2012, 5, 8, 11, 35, 10);
-                        return Serializer.serializeMethodResponse(value);
+                        const value = new Date(2012, 5, 8, 11, 35, 10);
+                        return (0, serializer_1.serializeMethodResponse)(value);
                     },
                     'contains the timestamp': assertXml('good_food/datetime_response.xml')
                 }
@@ -240,8 +251,8 @@ vows
             base64: {
                 'with a base64 param': {
                     topic: function () {
-                        var value = new Buffer('dGVzdGluZw==', 'base64');
-                        return Serializer.serializeMethodResponse(value);
+                        const value = Buffer.from('dGVzdGluZw==', 'base64');
+                        return (0, serializer_1.serializeMethodResponse)(value);
                     },
                     'contains the base64 string': assertXml('good_food/base64_response.xml')
                 }
@@ -249,15 +260,15 @@ vows
             double: {
                 'with a positive double param': {
                     topic: function () {
-                        var value = 3.141592654;
-                        return Serializer.serializeMethodResponse(value);
+                        const value = 3.141592654;
+                        return (0, serializer_1.serializeMethodResponse)(value);
                     },
                     'contains the positive double': assertXml('good_food/double_positive_response.xml')
                 },
                 'with a negative double param': {
                     topic: function () {
-                        var value = -1.41421;
-                        return Serializer.serializeMethodResponse(value);
+                        const value = -1.41421;
+                        return (0, serializer_1.serializeMethodResponse)(value);
                     },
                     'contains the negative double': assertXml('good_food/double_negative_response.xml')
                 }
@@ -265,22 +276,22 @@ vows
             integer: {
                 'with a positive integer param': {
                     topic: function () {
-                        var value = 4;
-                        return Serializer.serializeMethodResponse(value);
+                        const value = 4;
+                        return (0, serializer_1.serializeMethodResponse)(value);
                     },
                     'contains the positive integer': assertXml('good_food/int_positive_response.xml')
                 },
                 'with a negative integer param': {
                     topic: function () {
-                        var value = -4;
-                        return Serializer.serializeMethodResponse(value);
+                        const value = -4;
+                        return (0, serializer_1.serializeMethodResponse)(value);
                     },
                     'contains the negative integer': assertXml('good_food/int_negative_response.xml')
                 },
                 'with an integer param of 0': {
                     topic: function () {
-                        var value = 0;
-                        return Serializer.serializeMethodResponse(value);
+                        const value = 0;
+                        return (0, serializer_1.serializeMethodResponse)(value);
                     },
                     'contains 0': assertXml('good_food/int_zero_response.xml')
                 }
@@ -288,22 +299,22 @@ vows
             string: {
                 'with a regular string param': {
                     topic: function () {
-                        var value = 'testString';
-                        return Serializer.serializeMethodResponse(value);
+                        const value = 'testString';
+                        return (0, serializer_1.serializeMethodResponse)(value);
                     },
                     'contains the string': assertXml('good_food/string_response.xml')
                 },
                 'with an empty string': {
                     topic: function () {
-                        var value = '';
-                        return Serializer.serializeMethodResponse(value);
+                        const value = '';
+                        return (0, serializer_1.serializeMethodResponse)(value);
                     },
                     'contains the empty string': assertXml('good_food/string_empty_response.xml')
                 },
                 'with string contains emoji': {
                     topic: function () {
-                        var value = new Buffer('f09f9881', 'hex').toString('utf-8');
-                        return Serializer.serializeMethodResponse(value);
+                        const value = Buffer.from('f09f9881', 'hex').toString('utf-8');
+                        return (0, serializer_1.serializeMethodResponse)(value);
                     },
                     'contains emoji': assertXml('good_food/string_emoji_response.xml')
                 }
@@ -311,8 +322,8 @@ vows
             undefined: {
                 'with an undefined param': {
                     topic: function () {
-                        var value = undefined;
-                        return Serializer.serializeMethodResponse(value);
+                        const value = undefined;
+                        return (0, serializer_1.serializeMethodResponse)(value);
                     },
                     'contains the empty value': assertXml('good_food/undefined_response.xml')
                 }
@@ -322,8 +333,8 @@ vows
             array: {
                 'with a simple array': {
                     topic: function () {
-                        var value = [178, 'testString'];
-                        return Serializer.serializeMethodResponse(value);
+                        const value = [178, 'testString'];
+                        return (0, serializer_1.serializeMethodResponse)(value);
                     },
                     'contains the array': assertXml('good_food/array_response.xml')
                 }
@@ -331,23 +342,23 @@ vows
             struct: {
                 'with a one-level struct': {
                     topic: function () {
-                        var value = {
+                        const value = {
                             'the-Name': 'testValue'
                         };
-                        return Serializer.serializeMethodResponse(value);
+                        return (0, serializer_1.serializeMethodResponse)(value);
                     },
                     'contains the struct': assertXml('good_food/struct_response.xml')
                 },
                 'with a two-level struct': {
                     topic: function () {
-                        var value = {
+                        const value = {
                             theName: 'testValue',
                             anotherName: {
                                 nestedName: 'nestedValue'
                             },
                             lastName: 'Smith'
                         };
-                        return Serializer.serializeMethodResponse(value);
+                        return (0, serializer_1.serializeMethodResponse)(value);
                     },
                     'contains the struct': assertXml('good_food/struct_nested_response.xml')
                 }
@@ -355,11 +366,11 @@ vows
             fault: {
                 'with a fault': {
                     topic: function () {
-                        var value = {
+                        const value = {
                             faultCode: 4,
                             faultString: 'Too many parameters.'
                         };
-                        return Serializer.serializeFault(value);
+                        return (0, serializer_1.serializeFault)(value);
                     },
                     'contains the fault': assertXml('good_food/fault.xml')
                 }
@@ -368,21 +379,21 @@ vows
         CustomType: {
             default: {
                 topic: function () {
-                    var value = new CustomType('testCustomType');
-                    return Serializer.serializeMethodResponse(value);
+                    const value = new customtype_1.default('testCustomType');
+                    return (0, serializer_1.serializeMethodResponse)(value);
                 },
                 'contains the customType': assertXml('good_food/customtype_response.xml')
             },
             extended: {
                 topic: function () {
-                    var ExtendedCustomType = function (raw) {
-                        raw = 'extended' + raw;
-                        CustomType.call(this, raw);
+                    const ExtendedCustomType = function (raw) {
+                        raw = `extended${raw}`;
+                        customtype_1.default.call(this, raw);
                     };
-                    util.inherits(ExtendedCustomType, CustomType);
+                    util_1.default.inherits(ExtendedCustomType, customtype_1.default);
                     ExtendedCustomType.prototype.tagName = 'extendedCustomType';
-                    var value = new ExtendedCustomType('TestCustomType');
-                    return Serializer.serializeMethodResponse(value);
+                    const value = new ExtendedCustomType('TestCustomType');
+                    return (0, serializer_1.serializeMethodResponse)(value);
                 },
                 'contains the customType': assertXml('good_food/customtype_extended_response.xml')
             }
@@ -395,8 +406,8 @@ vows
 //==============================================================================
 function assertXml(fileName) {
     return function (result) {
-        var file = path.join(__dirname, 'fixtures', fileName);
-        var xml = fs.readFileSync(file, 'utf8').trim();
-        assert.strictEqual(result, xml);
+        const file = path_1.default.join(__dirname, 'fixtures', fileName);
+        const xml = fs_1.default.readFileSync(file, 'utf8').trim();
+        assert_1.default.strictEqual(result, xml);
     };
 }
