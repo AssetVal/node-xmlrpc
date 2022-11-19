@@ -1,7 +1,17 @@
 "use strict";
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var vows = require('vows'), path = require('path'), fs = require('fs'), assert = require('assert'), Deserializer = require('../lib/deserializer'), error_gallery = process.env.XMLRPC_ERROR_GALLERY;
-vows
+const vows_1 = __importDefault(require("vows"));
+const path_1 = __importDefault(require("path"));
+const fs_1 = __importDefault(require("fs"));
+const assert_1 = __importDefault(require("assert"));
+const deserializer_1 = __importDefault(require("../lib/deserializer"));
+const error_gallery = process.env.XMLRPC_ERROR_GALLERY;
+vows_1.default
     .describe('Deserializer')
     .addBatch({
     'deserializeMethodResponse() called with': {
@@ -50,7 +60,7 @@ vows
             base64: {
                 topic: deserializeMethodResponseFixture('good_food/base64_response.xml'),
                 'does not return an error': assertOk,
-                'results in the correct buffer': assertResponse(new Buffer('dGVzdGluZw==', 'base64'))
+                'results in the correct buffer': assertResponse(Buffer.from('dGVzdGluZw==', 'base64'))
             },
             // No illegal base64 test. node just skips illegal chars, which is RFC conform.
             double: {
@@ -224,9 +234,9 @@ vows
                     topic: deserializeMethodResponseFixture('good_food/fault.xml'),
                     'results in an error': assertError,
                     'which has all properties of a proper xmlrpc fault': function (error, r) {
-                        assert.strictEqual(error.message, 'XML-RPC fault: Too many parameters.');
-                        assert.strictEqual(error.faultString, 'Too many parameters.');
-                        assert.strictEqual(error.faultCode, 4);
+                        assert_1.default.strictEqual(error.message, 'XML-RPC fault: Too many parameters.');
+                        assert_1.default.strictEqual(error.faultString, 'Too many parameters.');
+                        assert_1.default.strictEqual(error.faultCode, 4);
                     }
                 },
                 'which does not include error information': {
@@ -254,9 +264,9 @@ vows
                 topic: deserializeMethodResponseFixture('good_food/very_large_response.xml'),
                 'does not return an error': assertOk,
                 'results in a matching object': function (error, result) {
-                    var resultsFile = path.join(__dirname, 'fixtures', 'good_food', 'very_large_response_results.json');
-                    var jsonResult = fs.readFileSync(resultsFile, 'utf8');
-                    assert.equal(JSON.stringify(result), jsonResult);
+                    var resultsFile = path_1.default.join(__dirname, 'fixtures', 'good_food', 'very_large_response_results.json');
+                    var jsonResult = fs_1.default.readFileSync(resultsFile, 'utf8');
+                    assert_1.default.equal(JSON.stringify(result), jsonResult);
                 }
             }
         }
@@ -267,26 +277,26 @@ vows
 // Macros & Utilities
 //==============================================================================
 function fixtureStream(f) {
-    return fs.createReadStream(path.join(__dirname, 'fixtures', f));
+    return fs_1.default.createReadStream(path_1.default.join(__dirname, 'fixtures', f));
 }
 function deserializeMethodResponseFixture(f) {
     return function () {
-        var deserializer = new Deserializer();
+        var deserializer = new deserializer_1.default();
         deserializer.deserializeMethodResponse(fixtureStream(f), this.callback);
     };
 }
 function assertError(error, result) {
-    assert.instanceOf(error, Error);
-    assert.isUndefined(result);
+    assert_1.default.instanceOf(error, Error);
+    assert_1.default.isUndefined(result);
     if (error_gallery) {
         console.log('' + error);
     }
 }
 function assertOk(error, result) {
-    assert.isTrue(!error);
+    assert_1.default.isTrue(!error);
 }
 function assertResponse(what) {
     return function (error, result) {
-        assert.deepEqual(result, what);
+        assert_1.default.deepEqual(result, what);
     };
 }

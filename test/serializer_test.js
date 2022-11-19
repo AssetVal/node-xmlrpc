@@ -9,9 +9,19 @@ const vows_1 = __importDefault(require("vows"));
 const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
 const assert_1 = __importDefault(require("assert"));
+const util_1 = __importDefault(require("util"));
 const serializer_1 = require("../lib/serializer");
 const customtype_1 = __importDefault(require("../lib/customtype"));
-const util_1 = __importDefault(require("util"));
+//==============================================================================
+// Utilities
+//==============================================================================
+function assertXml(fileName) {
+    return function (result) {
+        const file = path_1.default.join(__dirname, 'fixtures', fileName);
+        const xml = fs_1.default.readFileSync(file, 'utf8').trim();
+        assert_1.default.strictEqual(result, xml);
+    };
+}
 vows_1.default
     .describe('Serializer')
     .addBatch({
@@ -401,13 +411,3 @@ vows_1.default
     }
 })
     .export(module);
-//==============================================================================
-// Utilities
-//==============================================================================
-function assertXml(fileName) {
-    return function (result) {
-        const file = path_1.default.join(__dirname, 'fixtures', fileName);
-        const xml = fs_1.default.readFileSync(file, 'utf8').trim();
-        assert_1.default.strictEqual(result, xml);
-    };
-}

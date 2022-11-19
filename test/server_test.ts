@@ -1,9 +1,11 @@
-var vows = require('vows'),
-  assert = require('assert'),
-  http = require('http'),
-  fs = require('fs'),
-  Server = require('../lib/server'),
-  Client = require('../lib/client');
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+
+import assert from 'assert';
+import http from 'http';
+import vows from 'vows';
+import Client from '../lib/client';
+import Server from '../lib/server';
 
 vows
   .describe('Server')
@@ -12,7 +14,7 @@ vows
       // Test string parameter for options
       'with a string URI for options': {
         topic: function () {
-          var server = new Server('http://localhost:9005', false);
+          const server = new Server('http://localhost:9005', false);
           server.on('testMethod', this.callback);
 
           // Waits briefly to give the server time to start up and start listening

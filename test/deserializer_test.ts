@@ -1,9 +1,12 @@
-var vows = require('vows'),
-  path = require('path'),
-  fs = require('fs'),
-  assert = require('assert'),
-  Deserializer = require('../lib/deserializer'),
-  error_gallery = process.env.XMLRPC_ERROR_GALLERY;
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+
+import vows from 'vows';
+import path from 'path';
+import fs from 'fs';
+import assert from 'assert';
+import Deserializer from '../lib/deserializer';
+const error_gallery = process.env.XMLRPC_ERROR_GALLERY;
 
 vows
   .describe('Deserializer')
@@ -59,7 +62,7 @@ vows
         base64: {
           topic: deserializeMethodResponseFixture('good_food/base64_response.xml'),
           'does not return an error': assertOk,
-          'results in the correct buffer': assertResponse(new Buffer('dGVzdGluZw==', 'base64'))
+          'results in the correct buffer': assertResponse(Buffer.from('dGVzdGluZw==', 'base64'))
         },
         // No illegal base64 test. node just skips illegal chars, which is RFC conform.
 

@@ -142,7 +142,7 @@ function serializeValue(value: any, xml: any) {
 export function serializeMethodCall(
   method: string,
   params: Array<string>,
-  encoding?: (error?: unknown, xml?: any) => void
+  encoding?: (error?: unknown, xml?: any) => void | string
 ): string {
   params = params || [];
 

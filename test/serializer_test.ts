@@ -5,9 +5,21 @@ import vows from 'vows';
 import path from 'path';
 import fs from 'fs';
 import assert from 'assert';
+import util from 'util';
 import { serializeFault, serializeMethodCall, serializeMethodResponse } from '../lib/serializer';
 import CustomType from '../lib/customtype';
-import util from 'util';
+
+//==============================================================================
+// Utilities
+//==============================================================================
+
+function assertXml(fileName: string) {
+  return function (result: string) {
+    const file = path.join(__dirname, 'fixtures', fileName);
+    const xml = fs.readFileSync(file, 'utf8').trim();
+    assert.strictEqual(result, xml);
+  };
+}
 
 vows
   .describe('Serializer')
@@ -207,7 +219,7 @@ vows
         },
         extended: {
           topic: function () {
-            const ExtendedCustomType = function (raw) {
+            const ExtendedCustomType = function (raw: string) {
               raw = `extended${raw}`;
               CustomType.call(this, raw);
             };
@@ -419,14 +431,3 @@ vows
   })
   .export(module);
 
-//==============================================================================
-// Utilities
-//==============================================================================
-
-function assertXml(fileName) {
-  return function (result) {
-    const file = path.join(__dirname, 'fixtures', fileName);
-    const xml = fs.readFileSync(file, 'utf8').trim();
-    assert.strictEqual(result, xml);
-  };
-}

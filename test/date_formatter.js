@@ -1,8 +1,15 @@
 "use strict";
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var vows = require('vows'), assert = require('assert'), date_formatter = require('../lib/date_formatter');
+const vows_1 = __importDefault(require("vows"));
+const assert_1 = __importDefault(require("assert"));
+const date_formatter_1 = __importDefault(require("../lib/date_formatter"));
 var LOCAL_DATE = new Date(2014, 0, 20, 14, 25, 25);
-vows
+vows_1.default
     .describe('Date Formatter')
     .addBatch({
     'A local date': {
@@ -18,36 +25,36 @@ vows
             'without milliseconds': encodeCase({ ms: false }, 'T\\d{2}[:]?\\d{2}[:]?' + '\\d{2}([+-]\\d{2}[:]\\d{2}|Z)?$'),
             'to local representation': {
                 topic: function (d) {
-                    date_formatter.setOpts();
-                    date_formatter.setOpts({ local: true });
-                    return date_formatter.encodeIso8601(d);
+                    date_formatter_1.default.setOpts();
+                    date_formatter_1.default.setOpts({ local: true });
+                    return date_formatter_1.default.encodeIso8601(d);
                 },
                 'must return a properly formatted string': function (e, str) {
                     var reStr = '^\\d{4}[-]?\\d{2}[-]?\\d{2}T\\d{2}[:]?\\d{2}[:]?\\d{2}' + '(\\.\\d{3})?([+-]\\d{2}[:]\\d{2})?$';
-                    assert.isNull(e);
-                    assert.isString(str);
-                    assert.match(str, new RegExp(reStr));
+                    assert_1.default.isNull(e);
+                    assert_1.default.isString(str);
+                    assert_1.default.match(str, new RegExp(reStr));
                 },
                 'must match the correct time': function (str) {
                     var reStr = '^T14[:]?25[:]?25(\\.000)?([+-]\\d{2}[:]\\d{2})?$';
-                    assert.isString(str);
-                    assert.match(str, new RegExp());
+                    assert_1.default.isString(str);
+                    assert_1.default.match(str, new RegExp());
                 },
                 teardown: function () {
-                    date_formatter.setOpts();
+                    date_formatter_1.default.setOpts();
                 }
             },
             'to utc representation': {
                 topic: function (d) {
-                    date_formatter.setOpts();
-                    date_formatter.setOpts({ local: false });
-                    return date_formatter.encodeIso8601(d);
+                    date_formatter_1.default.setOpts();
+                    date_formatter_1.default.setOpts({ local: false });
+                    return date_formatter_1.default.encodeIso8601(d);
                 },
                 'must return a properly formatted string': function (e, str) {
                     var reStr = '^\\d{4}[-]?\\d{2}[-]?\\d{2}T\\d{2}[:]?\\d{2}[:]?\\d{2}' + '(\\.\\d{3})?Z$';
-                    assert.isNull(e);
-                    assert.isString(str);
-                    assert.match(str, new RegExp(reStr));
+                    assert_1.default.isNull(e);
+                    assert_1.default.isString(str);
+                    assert_1.default.match(str, new RegExp(reStr));
                 },
                 'must match the correct time': function (str) {
                     var offset = LOCAL_DATE.getTimezoneOffset();
@@ -59,11 +66,11 @@ vows
                         25 + (offset % 60),
                         '[:]?25(\\.000)?Z'
                     ].join('');
-                    assert.isString(str);
-                    assert.match(str, new RegExp(reStr));
+                    assert_1.default.isString(str);
+                    assert_1.default.match(str, new RegExp(reStr));
                 },
                 teardown: function () {
-                    date_formatter.setOpts();
+                    date_formatter_1.default.setOpts();
                 }
             }
         }
@@ -107,16 +114,16 @@ vows
 function encodeCase(opts, reStr) {
     return {
         topic: function (d) {
-            date_formatter.setOpts(opts);
-            return date_formatter.encodeIso8601(d);
+            date_formatter_1.default.setOpts(opts);
+            return date_formatter_1.default.encodeIso8601(d);
         },
         'must return a properly formatted string': function (e, str) {
-            assert.isNull(e);
-            assert.isString(str);
-            assert.match(str, new RegExp(reStr));
+            assert_1.default.isNull(e);
+            assert_1.default.isString(str);
+            assert_1.default.match(str, new RegExp(reStr));
         },
         teardown: function () {
-            date_formatter.setOpts();
+            date_formatter_1.default.setOpts();
         }
     };
 }
@@ -125,12 +132,12 @@ function decodeCase(str, check) {
         check = check();
     return {
         topic: function () {
-            return date_formatter.decodeIso8601(str);
+            return date_formatter_1.default.decodeIso8601(str);
         },
         'must return the right Date': function (e, date) {
-            assert.isNull(e);
-            assert.instanceOf(date, Date);
-            assert.equal(check, date.toISOString());
+            assert_1.default.isNull(e);
+            assert_1.default.instanceOf(date, Date);
+            assert_1.default.equal(check, date.toISOString());
         }
     };
 }

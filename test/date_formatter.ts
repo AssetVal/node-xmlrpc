@@ -1,6 +1,9 @@
-var vows = require('vows'),
-  assert = require('assert'),
-  date_formatter = require('../lib/date_formatter');
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+
+import vows from 'vows';
+import assert from 'assert';
+import date_formatter from '../lib/date_formatter';
 
 var LOCAL_DATE = new Date(2014, 0, 20, 14, 25, 25);
 

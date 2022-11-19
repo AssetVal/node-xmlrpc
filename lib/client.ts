@@ -35,7 +35,6 @@ type URIString = `${string}://${string}:${number}`;
  *   - {Boolean} cookies          - (optional) - if true then cookies returned by server will be stored and sent back on the next calls.
  *                                  Also it will be possible to access/manipulate cookies via #setCookie/#getCookie methods
  * @param {Boolean} isSecure      - True if using https for making calls, otherwise false.
- * @return {Client}
  */
 export default class Client {
   _options: ClientOptions & {
@@ -117,7 +116,7 @@ export default class Client {
    */
   methodCall(
     method: string,
-    params: Array<string>,
+    params: Array<string> | null,
     callback: ((err: Error) => void) | ((arg0: any, arg1: unknown) => void)
   ) {
     const options = this._options;
